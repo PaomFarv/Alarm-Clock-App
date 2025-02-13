@@ -1,78 +1,106 @@
-import time
-import tkinter as tk
-import pygame
+import customtkinter as ctk
+import datetime,pygame
 
-is_running = True
+ctk.set_appearance_mode("system")
+ctk.set_default_color_theme("green")
 
-def prefilled_text(event):
-    if user_input.get("1.0",tk.END).strip() == "Type Here...":
-        user_input.delete("1.0",tk.END)
+alarm_time = None
 
 def check_alarm():
-    global is_running
-    if is_running:
-        pygame.mixer.init()
-        pygame.mixer.music.load("Alarmsound.mp3")
+   
+    global alarm_time
+    if not alarm_time:
+        return  
 
-        local_time = time.localtime()
-        formated_time = time.strftime('%H:%M:%S',local_time)
+    local_time = datetime.datetime.now()
+    current_time = local_time.strftime("%H:%M:%S")
+    sound = "Alarmsound.mp3"
+    pygame.mixer.init()
+    pygame.mixer.music.load(sound)
+    if current_time == alarm_time:
+        time_label.configure(text="Time UP!", font=("Bahnschrift SemiBold", 70))
+        feedback_label.configure(text="Alarm ringing!", font=("Arial", 15, "bold"))
+        pygame.mixer.music.play()
+        return 
 
-        if user_input.get("1.0",tk.END).strip() == formated_time:
-            user_input.delete("1.0",tk.END)
-            user_input.insert("1.0","WAKE UP!!")
-            pygame.mixer.music.play()
-            sound_play()
-        else:
-            root.after(1000,check_alarm)
-    else:
-        return
-
-def sound_play():
-    if pygame.mixer.music.get_busy():
-        root.after(1000,sound_play)
-    else:
-        label_0.config(text="")
+    app.after(1000, check_alarm) 
 
 def set_alarm():
-    global is_running
-    if is_running:
-        check_alarm()
-        label_0.config(text="Alarm set successfully!")
-        root.after(3000,clear_message) 
+    
+    global alarm_time
+    alarm_time = f"{selected_hours.get()}:{selected_mins.get()}:{selected_secs.get()}"
 
-def reset():
-    global is_running
-    is_running = False
-    user_input.delete("1.0",tk.END)
-    label_0.config(text="Alarm reset successful.")
-    root.after(3000,clear_message)
+    if alarm_time != "00:00:00":
+        feedback_label.configure(text="Alarm set successfully!")
+        app.after(3000, popup_hide)
+        check_alarm() 
 
-def clear_message():
-    label_0.config(text="")
+def popup_hide():
+    feedback_label.configure(text="")
 
-root = tk.Tk()
-root.title("Alarm Clock")
-root.geometry("330x450")
-root.config(bg="#3D3D3D")
+def show_in_display():
 
-user_input = tk.Text(root,font=("Arial",35),width=10,height=1,bg="#F5ECD5",fg="Black",border=10)
-user_input.pack(pady=20)
+    global alarm_time
+    alarm_time = f"{selected_hours.get()}:{selected_mins.get()}:{selected_secs.get()}"
+    time_label.configure(text=alarm_time)
 
-user_input.bind("<FocusIn>",prefilled_text)
-user_input.insert("1.0","Type Here...")
+app = ctk.CTk()
+app.title("Alarm Clock")
+app.geometry("390x500")
+app.iconbitmap("ac.ico")
 
-guide = tk.Label(text="Example Input: 20:10:50 , 17:40:00")
-guide.pack()
+title_frame = ctk.CTkFrame(master=app, fg_color="transparent")
+title_frame.pack(pady=10)
 
-button_ac = tk.Button(text="Set Alarm",font=("Bahnschrift SemiBold",25),height=1,width=10,
-                      bg="#578E7E",fg="#F5ECD5",command=set_alarm,border=5,relief="raised")
-button_ac.pack(pady=10)
+app_title1 = ctk.CTkLabel(master=title_frame, text="Alarm", font=("Segoe UI Black", 50), text_color="#3CB47E")
+app_title1.pack(side="left", padx=5)
 
-button_reset = tk.Button(text="Reset",font=("Bahnschrift SemiBold",25),height=1,width=6,
-                      bg="#578E7E",fg="#F5ECD5",command=reset,border=5,relief="raised")
-button_reset.pack()
+app_title2 = ctk.CTkLabel(master=title_frame, text="Clock", font=("Segoe UI Black", 50))
+app_title2.pack(side="left", padx=5)
 
-label_0 = tk.Label(text="")
-label_0.pack(pady=20)
+main_frame = ctk.CTkFrame(master=app, border_width=1)
+main_frame.pack(expand=True, fill="both", padx=20, pady=20)
 
-root.mainloop()
+display = ctk.CTkFrame(master=main_frame, fg_color="transparent", width=350, height=70)
+display.pack(padx=10, pady=10)
+
+time_label = ctk.CTkLabel(master=display, text="00:00:00", width=350, height=70, font=("Bahnschrift SemiBold", 80))
+time_label.pack(fill="both", expand=True)
+
+btn_frames = ctk.CTkFrame(master=main_frame, fg_color="transparent")
+btn_frames.pack(pady=10)
+
+selected_hours = ctk.StringVar()
+selected_mins = ctk.StringVar()
+selected_secs = ctk.StringVar()
+
+hours = ctk.CTkOptionMenu(master=btn_frames, values=[f"{i:02d}" for i in range(24)],
+                          dropdown_hover_color="#308a3f", width=80, fg_color="black", font=("Arial", 15, "bold"),
+                          variable=selected_hours)
+hours.pack(side='left', padx=5)
+hours.set("00")
+
+mins = ctk.CTkOptionMenu(master=btn_frames, values=[f"{i:02d}" for i in range(60)],
+                         dropdown_hover_color="#308a3f", width=80, fg_color="black", font=("Arial", 15, "bold"),
+                         variable=selected_mins)
+mins.pack(side='left', padx=5)
+mins.set("00")
+
+seconds = ctk.CTkOptionMenu(master=btn_frames, values=[f"{i:02d}" for i in range(60)],
+                            dropdown_hover_color="#308a3f", width=80, fg_color="black", font=("Arial", 15, "bold"),
+                            variable=selected_secs)
+seconds.pack(side='left', padx=5)
+seconds.set("00")
+
+update_button = ctk.CTkButton(master=main_frame, text="Update", command=show_in_display, font=("Arial", 15, "bold"),
+                              fg_color="#25805D")
+update_button.pack(pady=20)
+
+set_button = ctk.CTkButton(master=main_frame, text="Set Alarm", command=set_alarm, font=("Arial", 15, "bold"),
+                           fg_color="#25805D")
+set_button.pack()
+
+feedback_label = ctk.CTkLabel(master=main_frame, text="", width=10, height=3, font=("Arial", 15))
+feedback_label.pack(pady=20)
+
+app.mainloop()

@@ -1,35 +1,41 @@
+ # Alarm Clock
 
-# Alarm Clock Application
+A Python-based alarm clock built using **CustomTkinter**, featuring a sleek green-themed UI.  
+Users can set an alarm, and when the time arrives, the interface will notify them.
 
-A simple **Alarm Clock** application built using Python, Tkinter for the GUI, and Pygame for playing alarm sounds. 
-Users can set alarms by inputting the time in `HH:MM:SS` format, and the app will alert with a sound when the set time is reached.
-Includes a reset feature to stop the alarm.
+## Features:
+- Elegant **green-themed** UI
+- Customizable time selection for alarms
+- Visual alert when the alarm goes off
+- Built with **CustomTkinter** for a modern design
 
-## Features
-- Set alarm by entering time in `HH:MM:SS` format.
-- Alarm triggers sound and a message when the time is reached.
-- Reset alarm feature.
-- Prefilled text input for easy use.
-- Time format validation.
+## How to Use:
+1. Select the **hours, minutes, and seconds** from the dropdowns.
+2. Click **Update** to preview the selected time.
+3. Click **Set Alarm** to activate it.
+4. The alarm will notify you when the set time arrives.
 
-## Requirements
+## Requirements:
 - Python 3.x
-- Tkinter
-- Pygame
+- `customtkinter`
+- `datetime`
 
-## Installation
+## Installation:
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/paomfarv/AlarmClockApp.git
    ```
-2. Install dependencies:
-   ```bash
-   pip install pygame
+   git clone https://github.com/paomfarv/Alarm-Clock.git
    ```
-3. Run the application:
-   ```bash
-   python AlarmClock.py
+2. Navigate to the project folder:
+   ```
+   cd Alarm-Clock
+   ```
+3. Install dependencies:
+   ```
+   pip install customtkinter
+   ```
+4. Run the program:
+   ```
+   python alarm_clock.py
    ```
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Enjoy your alarm clock! ⏰
